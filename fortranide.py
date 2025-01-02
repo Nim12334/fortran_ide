@@ -44,13 +44,11 @@ def new_file():
     a=filedialog.asksaveasfilename(title="New fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
     k=a
     c=open(a,"w")
-    print(k)
     text_file=e.get('1.0',END)
     c.write(text_file)
 def run_file():
-    program="program"
-    a2=filedialog.askopenfilename(title="Run fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
-    os.system(f"gfortran {a2} -o {program}")
+    program="file"
+    os.system(f"gfortran {k} -o {program}")
     os.system(f"{program}.exe")
     os.remove(f"{program}.exe")
 
@@ -59,12 +57,7 @@ def compile_file():
     words="program"
     s1=filedialog.askopenfilename(title="Compile fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
     s2+=s1
-    filee = os.path.realpath(__file__)
-    direct1 = str(os.path.dirname(filee))+"\program.exe"
-    s4=str(pathlib.Path(s1).name)
-    direct2=s1.replace(s4,"program.exe")
     os.system(f"gfortran {s1} -o {words}")
-    shutil.move(direct1,direct2)
     print("Compile  end")
 def save_edit():
  c=open(k,"w")
