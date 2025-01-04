@@ -8,13 +8,17 @@ from tkinter import colorchooser
 import selenium
 from selenium import webdriver
 from tkinter import messagebox
+from pygments.lexers.fortran import FortranLexer
+from pygments.token import Token
 a=Tk()
 k=""
 s2=""
+lexer=FortranLexer()
 a.title("Fortran ide")	
 a.option_add("*tearOff", False)
 e=Text(width=120,height=180)
-
+e.tag_config("keyword", foreground='green')
+e.tag_config("string_literal", foreground='red')
 
 m=Menu()
 m1=Menu()
@@ -54,10 +58,22 @@ def run_file():
 
 def compile_file():
     global s2
-    words="program"
+
+   
     s1=filedialog.askopenfilename(title="Compile fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
     s2+=s1
+    one=pathlib.Path(s1).name
+    two=one.replace(".","")
+    words=f"{two}"
     os.system(f"gfortran {s1} -o {words}")
+    path=os.path.realpath("fortranide.exe")
+    three="\e"
+    throo=three.replace("e","")
+    path1=os.path.dirname(path)+f"{throo}"+f"{words}.exe"
+    s4=pathlib.Path(s1).name
+    s5=s1.replace(s4,"")
+    shutil.move(path1,s5)
+
     print("Compile  end")
 def save_edit():
  c=open(k,"w")
@@ -89,6 +105,43 @@ def f_file():
     ach.get("https://fortran-lang.org/learn/")
 def info():
     messagebox.showwarning("Program is not product","offical Fortran")
+
+
+token_type_to_tag = {
+    Token.Keyword: "keyword",
+    Token.Operator.Word: "keyword",
+    Token.Name.Builtin: "keyword",
+    Token.Literal.String.Single: "string_literal",
+    Token.Literal.String.Double: "string_literal",
+}
+
+
+def get_text_coord(s: str, i: int):
+   
+    for row_number, line in enumerate(s.splitlines(keepends=True), 1):
+        if i < len(line):
+            return f'{row_number}.{i}'
+        
+        i -= len(line)
+
+
+def on_edit(event):
+ 
+    for tag in e.tag_names():
+        e.tag_remove(tag, 1.0, END)
+    
+
+    s = e.get(1.0, END)
+    tokens = lexer.get_tokens_unprocessed(s)
+    
+    for i, token_type, token in tokens:
+        j = i + len(token)
+        if token_type in token_type_to_tag:
+            e.tag_add(token_type_to_tag[token_type], get_text_coord(s, i), get_text_coord(s, j))
+
+  
+    e.edit_modified(0)
+e.bind('<<Modified>>', on_edit)
 
 m18=Menu()
 m19=Menu()
