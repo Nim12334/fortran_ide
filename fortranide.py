@@ -18,6 +18,18 @@ lexer=FortranLexer()
 a.title("Fortran ide")	
 a.option_add("*tearOff", False)
 e=Text(width=120,height=180)
+def on_update(event):
+    number.config(state=NORMAL)
+    number.delete(1.0, "end")
+    lines = e.get(1.0, "end").split("\n")
+    for i, lines in enumerate(lines, 1):
+        number.insert("end", str(i) + "\n")
+    number.config(state=DISABLED)
+e.bind("<KeyRelease>",on_update)
+number=Text(width=4,height=4,wrap='word')
+
+
+
 e.tag_config("keyword", foreground='green')
 e.tag_config("string_literal", foreground='blue')
 e.tag_config("comment", foreground='red')
@@ -167,7 +179,7 @@ def compile_file1():
   os.remove(s5+f"{words}.exe")
   shutil.move(path1,s5)
   print("Compile end")
-
+number.pack(side="left",fill="y")
 token_type_to_tag = {
     Token.Keyword: "keyword",
     Token.Operator.Word: "keyword",
@@ -204,7 +216,10 @@ def on_edit(event):
   
     e.edit_modified(0)
 e.bind('<<Modified>>', on_edit)
-
+def new_temp4():
+ j=f"program if\n!if file create:{time.asctime()}\ninteger::n=12\nif (n<13) then\nprint *, 'n less than 13'\nelse\nprint *,'n more than 13'\nend if\nend program"
+ e.delete('1.0',END)
+ e.insert('1.0',j)
 m18=Menu()
 m19=Menu()
 m19.add_command(label="delete",command=delete)
@@ -219,7 +234,7 @@ m31=Menu()
 m32=Menu()
 m33=Menu()
 m33.add_command(label="info program",command=info)
-m32.add_command(label="check of. documentation fortran",command=f_file)
+m32.add_command(label="check of. documentation gfortran",command=f_file)
 m31.add_command(label="font",command=font_file)
 m30.add_command(label="cursor",command=cursor_file)
 m30.add_command(label="background",command=back_file)
@@ -228,6 +243,7 @@ m20.add_command(label="new template Hello Fortran",command=new_temp)
 m20.add_command(label="new template read",command=new_temp1)
 m20.add_command(label="new template array",command=new_temp2)
 m20.add_command(label="new template empty",command=new_temp3)
+m20.add_command(label="new template if",command=new_temp4)
 m2.add_command(label="Run",command=run_file)
 m2.add_command(label="Compile",command=compile_file)
 m2.add_command(label="Compile this file",command=compile_file1)
@@ -240,10 +256,12 @@ m.add_cascade(label="color",menu=m30)
 m.add_cascade(label="font",menu=m31)
 m.add_cascade(label="help ",menu=m32)
 m.add_cascade(label="info",menu=m33)
-l=Scrollbar(orient="vertical",command=e.yview)
+
+l=Scrollbar(orient="vertical",command=lambda *args:[e.yview(*args),number.yview(*args)])
 l.pack(side=RIGHT,fill=Y)
 e.pack(fill=BOTH)
-e["yscrollcommand"]=l.set
+number.config(yscrollcommand=l.set)
+e.config(yscrollcommand=l.set)
 def new_file1(event):
     global k
     words="Hello Fortran"
@@ -355,4 +373,5 @@ e.bind("<Alt-g>",compile_file2)
 e.bind("<Control-g>",compile_file3)
 e.bind("<Control-e>",save_edit1)
 a.config(menu=m)
+
 a.mainloop()
