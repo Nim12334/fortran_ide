@@ -1,5 +1,6 @@
 from tkinter import*
 from tkinter import filedialog
+from tkinter.scrolledtext import ScrolledText
 import os
 import time
 import pathlib
@@ -10,14 +11,17 @@ from selenium import webdriver
 from tkinter import messagebox
 from pygments.lexers.fortran import FortranLexer
 from pygments.token import Token
-
+import subprocess
+import sys
 a=Tk()
 k=""
 s2=""
+progress=0
 lexer=FortranLexer()
 a.title("Fortran ide")	
 a.option_add("*tearOff", False)
-e=Text(width=120,height=180)
+e=Text(width=180,height=180)
+
 def on_update(event):
     number.config(state=NORMAL)
     number.delete(1.0, "end")
@@ -27,12 +31,9 @@ def on_update(event):
     number.config(state=DISABLED)
 e.bind("<KeyRelease>",on_update)
 number=Text(width=4,height=4,wrap='word')
-
-
-
+number.config(state=DISABLED)
 e.tag_config("keyword", foreground='green')
-e.tag_config("string_literal", foreground='blue')
-e.tag_config("comment", foreground='red')
+e.tag_config("string_literal", foreground='red')
 m=Menu()
 m1=Menu()
 def save_file():
@@ -101,6 +102,7 @@ def compile_file():
   os.remove(s5+f"{words}.exe")
   shutil.move(path1,s5)
   print("Compile  end")
+  
 def save_edit():
  c=open(k,"w")
  text_file=e.get('1.0',END)
@@ -113,15 +115,7 @@ def new_temp():
      e.delete('1.0',END)
      e.insert('1.0',j)
 
-def cursor_file():
- result =colorchooser.askcolor(initialcolor="black",title="color cursor")
- e["insertbackground"] = result[1]
-def back_file():
- result =colorchooser.askcolor(initialcolor="black",title="color background")
- e["background"] = result[1]   
-def fore_file():
- result =colorchooser.askcolor(initialcolor="black",title="color text")
- e["foreground"] = result[1]   
+
 def font_file1(font):
     e["font"]=font
 def font_file():
@@ -181,13 +175,15 @@ def compile_file1():
   print("Compile end")
 number.pack(side="left",fill="y")
 token_type_to_tag = {
+  
+     
     Token.Keyword: "keyword",
     Token.Operator.Word: "keyword",
     Token.Name.Builtin: "keyword",
     Token.Literal.String.Single: "string_literal",
     Token.Literal.String.Double: "string_literal",
-    Token.Comment.Single: "comment",
-    Token.Comment.Double: "comment"
+    
+   
 }
 
 def get_text_coord(s: str, i: int):
@@ -220,6 +216,56 @@ def new_temp4():
  j=f"program if\n!if file create:{time.asctime()}\ninteger::n=12\nif (n<13) then\nprint *, 'n less than 13'\nelse\nprint *,'n more than 13'\nend if\nend program"
  e.delete('1.0',END)
  e.insert('1.0',j)
+def dark_them():
+    e["foreground"]="white"
+    e["background"]="#1e1e1e"
+    e["insertbackground"]="white"
+    number["background"]="#1e1e1e"
+    number["foreground"]="white"
+    m["foreground"]="#1e1e1e"
+def light_them():
+    e["foreground"]="black"
+    e["background"]="#fafafa"
+    e["insertbackground"]="black"
+    number["background"]="#fafafa"
+    number["foreground"]="black"
+def new_temp5():
+  j=f"program while\n!File create:{time.asctime()}\ndo i=1,10\nprint*,i\nend do\nend program"
+  e.delete('1.0',END)
+  e.insert('1.0',j)
+def f1_file():
+ global progress
+ if progress==0:
+  m1=messagebox.askokcancel("new_template is responsible for","creating new ones templates")
+ if m1:
+  m2=messagebox.askokcancel("There are 6 of them ","in the current version")
+ if m2:
+  m3=messagebox.askokcancel("The File tab is responsible for","saving create new or open files")
+ if m3:
+  m4=messagebox.askokcancel("The Edit tab is responsible for","saving changed files")
+ if m4:
+  m5=messagebox.askokcancel("The Compile or run tab is responsible for","Compiling or running files")
+ if m5:
+  m5=messagebox.askokcancel("Important to note","Compile needs to select a file")
+  m5=messagebox.askokcancel("And in the Compile this file section","select file no need")
+ if m5:
+    m6=messagebox.askokcancel("Excellent well done","we looked at the main functions of ide")
+
+
+def blue_them():
+    e["foreground"]="white"
+    e["background"]="#152238"
+    e["insertbackground"]="white"
+    number["background"]="#152238"
+    number["foreground"]="white"
+def green_them():
+    e["foreground"]="white"
+    e["background"]="#062315"
+    e["insertbackground"]="white"
+    number["background"]="#062315"
+    number["foreground"]="white"
+
+
 m18=Menu()
 m19=Menu()
 m19.add_command(label="delete",command=delete)
@@ -230,20 +276,21 @@ m1.add_command(label="New",command=new_file)
 m2=Menu()
 m20=Menu()
 m30=Menu()
-m31=Menu()
 m32=Menu()
 m33=Menu()
+m30.add_command(label="Dark",command=dark_them)
+m30.add_command(label="Light",command=light_them)
+m30.add_command(label="Blue",command=blue_them)
+m30.add_command(label="Green",command=green_them)
 m33.add_command(label="info program",command=info)
 m32.add_command(label="check of. documentation gfortran",command=f_file)
-m31.add_command(label="font",command=font_file)
-m30.add_command(label="cursor",command=cursor_file)
-m30.add_command(label="background",command=back_file)
-m30.add_command(label="foreground",command=fore_file)
+m32.add_command(label="help ide",command=f1_file)
 m20.add_command(label="new template Hello Fortran",command=new_temp)
 m20.add_command(label="new template read",command=new_temp1)
 m20.add_command(label="new template array",command=new_temp2)
 m20.add_command(label="new template empty",command=new_temp3)
 m20.add_command(label="new template if",command=new_temp4)
+m20.add_command(label="new template while",command=new_temp5)
 m2.add_command(label="Run",command=run_file)
 m2.add_command(label="Compile",command=compile_file)
 m2.add_command(label="Compile this file",command=compile_file1)
@@ -252,16 +299,18 @@ m.add_cascade(label="Compile or Run",menu=m2)
 m.add_cascade(label="Edit",menu=m18)
 m.add_cascade(label="delete",menu=m19)
 m.add_cascade(label="new template",menu=m20)
-m.add_cascade(label="color",menu=m30)
-m.add_cascade(label="font",menu=m31)
+m.add_cascade(label="themes",menu=m30)
+
 m.add_cascade(label="help ",menu=m32)
 m.add_cascade(label="info",menu=m33)
 
 l=Scrollbar(orient="vertical",command=lambda *args:[e.yview(*args),number.yview(*args)])
+
 l.pack(side=RIGHT,fill=Y)
 e.pack(fill=BOTH)
 number.config(yscrollcommand=l.set)
 e.config(yscrollcommand=l.set)
+
 def new_file1(event):
     global k
     words="Hello Fortran"
@@ -373,5 +422,6 @@ e.bind("<Alt-g>",compile_file2)
 e.bind("<Control-g>",compile_file3)
 e.bind("<Control-e>",save_edit1)
 a.config(menu=m)
+
 
 a.mainloop()
