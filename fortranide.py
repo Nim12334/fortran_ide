@@ -13,12 +13,14 @@ from pygments.lexers.fortran import FortranLexer
 from pygments.token import Token
 import subprocess
 import sys
+import threading
 a=Tk()
 k=""
 s2=""
+fjic=0
 progress=0
 lexer=FortranLexer()
-a.title("Fortran ide")	
+a.title("Fortran ide")  
 a.option_add("*tearOff", False)
 e=Text(width=180,height=180)
 
@@ -37,23 +39,30 @@ e.tag_config("string_literal", foreground='red')
 m=Menu()
 m1=Menu()
 def save_file():
- global k
- a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
- if a!="":
-  k=a
-  c=open(a,"w")
-  text_file=e.get('1.0',END)
-  c.write(text_file)
+ try:
+  global k
+  a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  if a!="":
+   k=a
+   c=open(a,"w")
+   text_file=e.get('1.0',END)
+   c.write(text_file)
+ except:
+    print("")
 def open_file():
-    global k
-    a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
-    k=a
-    if a!="":
-     c=open(a,"r") 
-     text=c.read()
-     e.delete("1.0",END)
-     e.insert("1.0",text)
+ try:
+  global k
+  a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  k=a
+  if a!="":
+    c=open(a,"r") 
+    text=c.read()
+    e.delete("1.0",END)
+    e.insert("1.0",text)
+ except:
+    print("")
 def new_file():
+ try:
     global k
     words="Hello Fortran"
     j=f"program hello\n!create:{time.asctime()}\nimplicit none\nwrite(*,*) '{words}'\nend program"
@@ -64,11 +73,17 @@ def new_file():
     c=open(a,"w")
     text_file=e.get('1.0',END)
     c.write(text_file)
+ except:
+    print("")
 def run_file():
+
     program="file"
     os.system(f"gfortran {k} -o {program}")
     os.system(f"{program}.exe")
     os.remove(f"{program}.exe")
+ 
+
+
 
 def compile_file():
  s1=filedialog.askopenfilename(title="Compile fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
@@ -104,9 +119,12 @@ def compile_file():
   print("Compile  end")
   
 def save_edit():
- c=open(k,"w")
- text_file=e.get('1.0',END)
- c.write(text_file)
+ try:
+  c=open(k,"w")
+  text_file=e.get('1.0',END)
+  c.write(text_file)
+ except:
+  print("")
 def delete():
     e.delete('1.0',END)
 def new_temp():
@@ -244,7 +262,7 @@ def f1_file():
  if m3:
   m4=messagebox.askokcancel("The Edit tab is responsible for","saving changed files")
  if m4:
-  m5=messagebox.askokcancel("The Compile or run tab is responsible for","Compiling or running files")
+  m5=messagebox.askokcancel("The Compile or run tab is responsible for","Compiling or running or debug files")
  if m5:
   m5=messagebox.askokcancel("Important to note","Compile needs to select a file")
   m5=messagebox.askokcancel("And in the Compile this file section","select file no need")
@@ -264,6 +282,9 @@ def green_them():
     e["insertbackground"]="white"
     number["background"]="#062315"
     number["foreground"]="white"
+  
+
+
 
 
 m18=Menu()
@@ -278,6 +299,50 @@ m20=Menu()
 m30=Menu()
 m32=Menu()
 m33=Menu()
+def debug_file1():
+
+    subprocess.run(f"gfortran {k} -g")
+    subprocess.run(f"gdb {k}.exe")
+    threading.Thread(target=debug_file1)._stop()
+
+def debug_file():
+    threading.Thread(target=debug_file1).start()
+def files_file1():
+ try:
+  global s2
+  global k
+  global fjic
+  s1=k
+  s2+=s1
+  one=pathlib.Path(s1).name
+  two=one.replace(".","")
+  words=f"{two}"
+  os.system(f"gfortran {s1} -o {words}")
+  path=os.path.realpath("fortranide.exe")
+  three="\e"
+  throo=three.replace("e","")
+  path1=os.path.dirname(path)+f"{throo}"+f"{words}.exe"
+  s4=pathlib.Path(s1).name
+  s5=s1.replace(s4,"")
+  shutil.move(path1,s5)
+  l=k.replace(one,f'{words}.exe')
+ except:
+  s1=k
+  s2+=s1
+  one=pathlib.Path(s1).name
+  two=one.replace(".","")
+  words=f"{two}"
+  os.system(f"gfortran {s1} -o {words}")
+  path=os.path.realpath("fortranide.exe")
+  three="\e"
+  throo=three.replace("e","")
+  path1=os.path.dirname(path)+f"{throo}"+f"{words}.exe"
+  s4=pathlib.Path(s1).name
+  s5=s1.replace(s4,"")
+  os.remove(s5+f"{words}.exe")
+  shutil.move(path1,s5)
+  l=k.replace(one,f'{words}.exe')
+ os.system(f"{l}")
 m30.add_command(label="Dark",command=dark_them)
 m30.add_command(label="Light",command=light_them)
 m30.add_command(label="Blue",command=blue_them)
@@ -294,6 +359,8 @@ m20.add_command(label="new template while",command=new_temp5)
 m2.add_command(label="Run",command=run_file)
 m2.add_command(label="Compile",command=compile_file)
 m2.add_command(label="Compile this file",command=compile_file1)
+m2.add_command(label="Debug",command=debug_file1)
+m2.add_command(label="Compile & Run",command=files_file1)
 m.add_cascade(label="File",menu=m1)
 m.add_cascade(label="Compile or Run",menu=m2)
 m.add_cascade(label="Edit",menu=m18)
@@ -312,33 +379,42 @@ number.config(yscrollcommand=l.set)
 e.config(yscrollcommand=l.set)
 
 def new_file1(event):
-    global k
-    words="Hello Fortran"
-    j=f"program hello\n!create:{time.asctime()}\nimplicit none\nwrite(*,*) '{words}'\nend program"
-    e.delete("1.0",END)
-    e.insert("1.0",j)
-    a=filedialog.asksaveasfilename(title="New fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
-    k=a
-    c=open(a,"w")
-    text_file=e.get('1.0',END)
-    c.write(text_file)
-def save_file1(event):
- global k
- a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
- if a!="":
+ try:
+  global k
+  words="Hello Fortran"
+  j=f"program hello\n!create:{time.asctime()}\nimplicit none\nwrite(*,*) '{words}'\nend program"
+  e.delete("1.0",END)
+  e.insert("1.0",j)
+  a=filedialog.asksaveasfilename(title="New fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
   k=a
   c=open(a,"w")
   text_file=e.get('1.0',END)
   c.write(text_file)
+ except:
+    print("")
+def save_file1(event):
+ try:
+  global k
+  a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  if a!="":
+   k=a
+   c=open(a,"w")
+   text_file=e.get('1.0',END)
+   c.write(text_file)
+ except:
+    print("")
 def open_file1(event):
-    global k
-    a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
-    k=a
-    if a!="":
-     c=open(a,"r") 
-     text=c.read()
-     e.delete("1.0",END)
-     e.insert("1.0",text)
+ try:
+  global k
+  a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  k=a
+  if a!="":
+   c=open(a,"r") 
+   text=c.read()
+   e.delete("1.0",END)
+   e.insert("1.0",text)
+ except:
+    print("")
 def run_file1(event):
     program="file"
     os.system(f"gfortran {k} -o {program}")
@@ -411,9 +487,38 @@ def compile_file3(event):
   shutil.move(path1,s5)
   print("Compile end")
 def save_edit1(event):
- c=open(k,"w")
- text_file=e.get('1.0',END)
- c.write(text_file)
+ try:
+  c=open(k,"w")
+  text_file=e.get('1.0',END)
+  c.write(text_file)
+ except:
+    print("")
+def alt_new(event):
+ words="Hello Fortran"
+ j=f"program hello\n!create:{time.asctime()}\nimplicit none\nwrite(*,*) '{words}'\nend program"
+ e.delete('1.0',END)
+ e.insert('1.0',j)
+def alt_new1(event):
+ words="Hello"
+ j=f"program read1\n!create:{time.asctime()}\nimplicit none\nreal::x\nwrite(*,*) 'Please write value:'\nread(*,*) x\nprint*, x\nend program"
+ e.delete('1.0',END)
+ e.insert('1.0',j)
+def alt_new2(event):
+ j=f"program array1\n!create:{time.asctime()}\nimplicit none\ninteger::x(10)\nx=[1,2,3,4,5,6,7,8,9,10]\nprint*,x\nend program"
+ e.delete('1.0',END)
+ e.insert('1.0',j)
+def alt_new3(event):
+ j=f"program empty\n!Empty file create:{time.asctime()}\nend program"
+ e.delete('1.0',END)
+ e.insert('1.0',j)
+def alt_new4(event):
+ j=f"program if\n!if file create:{time.asctime()}\ninteger::n=12\nif (n<13) then\nprint *, 'n less than 13'\nelse\nprint *,'n more than 13'\nend if\nend program"
+ e.delete('1.0',END)
+ e.insert('1.0',j)
+def alt_new5(event):
+  j=f"program while\n!File create:{time.asctime()}\ndo i=1,10\nprint*,i\nend do\nend program"
+  e.delete('1.0',END)
+  e.insert('1.0',j)
 e.bind("<Control-n>",new_file1)
 e.bind("<Control-s>",save_file1)
 e.bind("<Control-o>",open_file1)
@@ -421,6 +526,12 @@ e.bind("<Control-r>",run_file1)
 e.bind("<Alt-g>",compile_file2)
 e.bind("<Control-g>",compile_file3)
 e.bind("<Control-e>",save_edit1)
+e.bind("<Control-l>",alt_new)
+e.bind("<Control-m>",alt_new1)
+e.bind("<Control-d>",alt_new2)
+e.bind("<Control-f>",alt_new3)
+e.bind("<Control-h>",alt_new4)
+e.bind("<Control-j>",alt_new5)
 a.config(menu=m)
 
 
