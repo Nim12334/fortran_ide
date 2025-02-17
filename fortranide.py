@@ -15,6 +15,8 @@ import subprocess
 import sys
 import threading
 a=Tk()
+value3="gfortran"
+value4="-o"
 k=""
 s2=""
 fjic=0
@@ -24,13 +26,14 @@ a.title("Fortran ide")
 a.option_add("*tearOff", False)
 e=Text(width=180,height=180)
 
-def on_update(event):
+def on_update(event=None):
     number.config(state=NORMAL)
     number.delete(1.0, "end")
-    lines = e.get(1.0, "end").split("\n")
-    for i, lines in enumerate(lines, 1):
-        number.insert("end", str(i) + "\n")
+    lines = e.get(1.0, "end-1c").split("\n") 
+    for i in range(1, len(lines) + 1):
+        number.insert("end", f"{i}\n")
     number.config(state=DISABLED)
+    number.yview_moveto(e.yview()[0])
 e.bind("<KeyRelease>",on_update)
 number=Text(width=4,height=4,wrap='word')
 number.config(state=DISABLED)
@@ -76,16 +79,20 @@ def new_file():
  except:
     print("")
 def run_file():
-
+   global value3,value4
+   try:
     program="file"
-    os.system(f"gfortran {k} -o {program}")
+    os.system(f"{value3} {k} {value4} {program}")
     os.system(f"{program}.exe")
     os.remove(f"{program}.exe")
+   except:
+    print("Error run file!")
  
 
 
 
 def compile_file():
+ global value3,value4
  s1=filedialog.askopenfilename(title="Compile fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
  try:
   global s2
@@ -93,7 +100,7 @@ def compile_file():
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -107,7 +114,7 @@ def compile_file():
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -134,11 +141,7 @@ def new_temp():
      e.insert('1.0',j)
 
 
-def font_file1(font):
-    e["font"]=font
-def font_file():
-    a.tk.call("tk", "fontchooser", "configure", "-font", e["font"], "-command", a.register(font_file1))
-    a.tk.call("tk", "fontchooser", "show")
+
 def f_file():
     ach=webdriver.Edge()
     ach.get("https://fortran-lang.org/learn/")
@@ -161,12 +164,13 @@ def compile_file1():
  try:
   global s2
   global k
+  global value3,value4
   s1=k
   s2+=s1
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -181,7 +185,7 @@ def compile_file1():
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -256,7 +260,7 @@ def f1_file():
  if progress==0:
   m1=messagebox.askokcancel("new_template is responsible for","creating new ones templates")
  if m1:
-  m2=messagebox.askokcancel("There are 6 of them ","in the current version")
+  m2=messagebox.askokcancel("There are 7 of them ","in the current version")
  if m2:
   m3=messagebox.askokcancel("The File tab is responsible for","saving create new or open files")
  if m3:
@@ -267,7 +271,11 @@ def f1_file():
   m5=messagebox.askokcancel("Important to note","Compile needs to select a file")
   m5=messagebox.askokcancel("And in the Compile this file section","select file no need")
  if m5:
-    m6=messagebox.askokcancel("Excellent well done","we looked at the main functions of ide")
+    m6=messagebox.askokcancel("The special opportunities tab is responsible for","Select compilator or full screen")
+  
+
+ if m6:
+    m7=messagebox.askokcancel("Excellent well done","we looked at the main functions of ide")
 
 
 def blue_them():
@@ -312,12 +320,13 @@ def files_file1():
   global s2
   global k
   global fjic
+  global value3,value4
   s1=k
   s2+=s1
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -332,7 +341,7 @@ def files_file1():
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -343,10 +352,21 @@ def files_file1():
   shutil.move(path1,s5)
   l=k.replace(one,f'{words}.exe')
  os.system(f"{l}")
+def yellow_them():
+    e["foreground"]="white"
+    e["background"]="#343434"
+    e["insertbackground"]="white"
+    number["background"]="#343434"
+    number["foreground"]="white"
+def new_temp6():
+    e12="program hello\ntype :: t_pair\n  integer :: y\n real :: x\nend type\nwrite(*,*) 'My first type Fortran!'\nend program"
+    e.delete(1.0,END)
+    e.insert(1.0,e12)
 m30.add_command(label="Dark",command=dark_them)
 m30.add_command(label="Light",command=light_them)
 m30.add_command(label="Blue",command=blue_them)
 m30.add_command(label="Green",command=green_them)
+m30.add_command(label="Jet Black",command=yellow_them)
 m33.add_command(label="info program",command=info)
 m32.add_command(label="check of. documentation gfortran",command=f_file)
 m32.add_command(label="help ide",command=f1_file)
@@ -356,6 +376,7 @@ m20.add_command(label="new template array",command=new_temp2)
 m20.add_command(label="new template empty",command=new_temp3)
 m20.add_command(label="new template if",command=new_temp4)
 m20.add_command(label="new template while",command=new_temp5)
+m20.add_command(label="new template type",command=new_temp6)
 m2.add_command(label="Run",command=run_file)
 m2.add_command(label="Compile",command=compile_file)
 m2.add_command(label="Compile this file",command=compile_file1)
@@ -367,6 +388,52 @@ m.add_cascade(label="Edit",menu=m18)
 m.add_cascade(label="delete",menu=m19)
 m.add_cascade(label="new template",menu=m20)
 m.add_cascade(label="themes",menu=m30)
+
+m31=Menu()
+def full_screen():
+ a.overrideredirect(1)
+ a.state('zoomed')
+def unfull_screen():
+ a.overrideredirect(0)
+ a.state('normal')
+
+def select_compilator():
+    window=Tk()
+    def close_command():
+     window.destroy()
+    def save_command():
+        global value3,value4
+        value1=select_button4.get()
+        value2=select_button6.get()
+        value3=value1
+        value4=value2
+        print(value3)
+        print(value4)
+
+    window.title("Select compilator")
+    window.geometry("500x500")
+    window.resizable(False,False)
+    select_button=Label(window,text="!Reminder to take effect please click save",font=(30))
+    select_button3=Label(window,text="!Explanation in this field you must fill in how you access your compiler on\n the command line, for example, if it is intel fortran, then ifort",font=(30))
+    select_button4=Entry(window,width=70)
+    select_button5=Label(window,text="!Explanation In this field you need to enter a command that gives a name\n to your compile file, for example in intel fortran -o",font=(30))
+    select_button6=Entry(window,width=70)
+    select_button1=Button(window,text="Save",font=30,command=save_command)
+    select_button2=Button(window,text="Close",font=30,command=close_command)
+
+    select_button.place(x=0,y=0)
+    select_button3.place(x=0,y=50)
+    select_button4.place(x=0,y=100)
+    select_button5.place(x=0,y=150)
+    select_button6.place(x=0,y=200)
+    select_button1.place(x=450,y=470)
+    select_button2.place(x=0,y=470)
+    window.mainloop()
+
+m31.add_command(label="full screen",command=full_screen)
+m31.add_command(label="unfull screen",command=unfull_screen)
+m31.add_command(label="select fortran compilator",command=select_compilator)
+m.add_cascade(label="special opportunities",menu=m31)
 
 m.add_cascade(label="help ",menu=m32)
 m.add_cascade(label="info",menu=m33)
@@ -416,19 +483,21 @@ def open_file1(event):
  except:
     print("")
 def run_file1(event):
+    global value3,value4
     program="file"
-    os.system(f"gfortran {k} -o {program}")
+    os.system(f"{value3} {k} {value4} {program}")
     os.system(f"{program}.exe")
     os.remove(f"{program}.exe")
 def compile_file2(event):
  s1=filedialog.askopenfilename(title="Compile fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
  try:
   global s2
+  global value3,value4
   s2+=s1
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -442,7 +511,7 @@ def compile_file2(event):
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -456,12 +525,13 @@ def compile_file3(event):
  try:
   global s2
   global k
+  global value3,value4
   s1=k
   s2+=s1
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
@@ -477,7 +547,7 @@ def compile_file3(event):
   one=pathlib.Path(s1).name
   two=one.replace(".","")
   words=f"{two}"
-  os.system(f"gfortran {s1} -o {words}")
+  os.system(f"{value3} {s1} {value4} {words}")
   path=os.path.realpath("fortranide.exe")
   three="\e"
   throo=three.replace("e","")
