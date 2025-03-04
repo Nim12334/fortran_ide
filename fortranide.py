@@ -17,6 +17,7 @@ import threading
 a=Tk()
 value3="gfortran"
 value4="-o"
+
 k=""
 s2=""
 fjic=0
@@ -126,6 +127,7 @@ def compile_file():
   print("Compile  end")
   
 def save_edit():
+ global k
  try:
   c=open(k,"w")
   text_file=e.get('1.0',END)
@@ -271,8 +273,8 @@ def f1_file():
   m5=messagebox.askokcancel("Important to note","Compile needs to select a file")
   m5=messagebox.askokcancel("And in the Compile this file section","select file no need")
  if m5:
-    m6=messagebox.askokcancel("The special opportunities tab is responsible for","Select compilator or full screen")
-  
+    m6=messagebox.askokcancel("The special opportunities tab is responsible for","Select compilator or full screen or auto-saving")
+    m6=messagebox.askokcancel("Important to note","When autosaving you can't run files")
 
  if m6:
     m7=messagebox.askokcancel("Excellent well done","we looked at the main functions of ide")
@@ -362,6 +364,27 @@ def new_temp6():
     e12="program hello\ntype :: t_pair\n  integer :: y\n real :: x\nend type\nwrite(*,*) 'My first type Fortran!'\nend program"
     e.delete(1.0,END)
     e.insert(1.0,e12)
+
+def run_edit():
+  while(True):
+   time.sleep(1)
+   global lemt
+   global k
+   c=open(k,"w")
+   text_file=e.get('1.0',END)
+   c.write(text_file)
+   
+
+  
+
+def run_edit1():
+  s=messagebox.askokcancel("Warning!When you log in","you cannot run files")
+  s1=messagebox.askokcancel(" And if you want to run ","the file you have to restart ide")
+  if s1:
+   threading.Thread(target=run_edit).start()
+def terminal_open():
+   
+    os.system(f"cmd")
 m30.add_command(label="Dark",command=dark_them)
 m30.add_command(label="Light",command=light_them)
 m30.add_command(label="Blue",command=blue_them)
@@ -382,6 +405,8 @@ m2.add_command(label="Compile",command=compile_file)
 m2.add_command(label="Compile this file",command=compile_file1)
 m2.add_command(label="Debug",command=debug_file1)
 m2.add_command(label="Compile & Run",command=files_file1)
+m18.add_command(label="auto-saving",command=run_edit1)
+
 m.add_cascade(label="File",menu=m1)
 m.add_cascade(label="Compile or Run",menu=m2)
 m.add_cascade(label="Edit",menu=m18)
@@ -429,12 +454,16 @@ def select_compilator():
     select_button1.place(x=450,y=470)
     select_button2.place(x=0,y=470)
     window.mainloop()
-
+def select_theme():
+     select_them = colorchooser.askcolor(title ="Choose color") 
+     e["bg"]=select_them[1]
+     number["bg"]=select_them[1]
 m31.add_command(label="full screen",command=full_screen)
 m31.add_command(label="unfull screen",command=unfull_screen)
 m31.add_command(label="select fortran compilator",command=select_compilator)
+m31.add_command(label="new  theme",command=select_theme)
 m.add_cascade(label="special opportunities",menu=m31)
-
+m31.add_command(label="open  terminal",command=terminal_open)
 m.add_cascade(label="help ",menu=m32)
 m.add_cascade(label="info",menu=m33)
 
