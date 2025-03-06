@@ -14,6 +14,7 @@ from pygments.token import Token
 import subprocess
 import sys
 import threading
+import numpy as np
 a=Tk()
 value3="gfortran"
 value4="-o"
@@ -80,6 +81,7 @@ def new_file():
  except:
     print("")
 def run_file():
+   
    global value3,value4
    try:
     program="file"
@@ -311,12 +313,13 @@ m32=Menu()
 m33=Menu()
 def debug_file1():
 
-    subprocess.run(f"gfortran {k} -g")
-    subprocess.run(f"gdb {k}.exe")
-    threading.Thread(target=debug_file1)._stop()
+    os.system(f"gfortran {k} -g")
+    os.system(f"gdb {k}.exe")
+    
 
 def debug_file():
     threading.Thread(target=debug_file1).start()
+
 def files_file1():
  try:
   global s2
@@ -382,15 +385,21 @@ def run_edit1():
   s1=messagebox.askokcancel(" And if you want to run ","the file you have to restart ide")
   if s1:
    threading.Thread(target=run_edit).start()
-def terminal_open():
-   
+def terminal_open1():
     os.system(f"cmd")
+
+
+def terminal_open():
+    threading.Thread(target=terminal_open1).start()
+def info2():
+ messagebox.showwarning("Version:5.1.2","by Nin12334")
 m30.add_command(label="Dark",command=dark_them)
 m30.add_command(label="Light",command=light_them)
 m30.add_command(label="Blue",command=blue_them)
 m30.add_command(label="Green",command=green_them)
 m30.add_command(label="Jet Black",command=yellow_them)
 m33.add_command(label="info program",command=info)
+m33.add_command(label="about version",command=info2)
 m32.add_command(label="check of. documentation gfortran",command=f_file)
 m32.add_command(label="help ide",command=f1_file)
 m20.add_command(label="new template Hello Fortran",command=new_temp)
