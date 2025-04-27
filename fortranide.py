@@ -14,11 +14,11 @@ from pygments.token import Token
 import subprocess
 import sys
 import threading
-import numpy as np
 a=Tk()
 value3="gfortran"
 value4="-o"
-
+value9="-g"
+value10="gdb"
 k=""
 s2=""
 fjic=0
@@ -41,12 +41,14 @@ number=Text(width=4,height=4,wrap='word')
 number.config(state=DISABLED)
 e.tag_config("keyword", foreground='green')
 e.tag_config("string_literal", foreground='red')
+e.tag_config("comment_literal",foreground='gray')
+e.tag_config("number_6",foreground='blue')
 m=Menu()
 m1=Menu()
 def save_file():
  try:
   global k
-  a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08")),("setting file",("*.setf","*.set"))])
   if a!="":
    k=a
    c=open(a,"w")
@@ -57,7 +59,7 @@ def save_file():
 def open_file():
  try:
   global k
-  a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08")),("setting file",("*.setf","*.set"))])
   k=a
   if a!="":
     c=open(a,"r") 
@@ -73,7 +75,7 @@ def new_file():
     j=f"program hello\n!create:{time.asctime()}\nimplicit none\nwrite(*,*) '{words}'\nend program"
     e.delete("1.0",END)
     e.insert("1.0",j)
-    a=filedialog.asksaveasfilename(title="New fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+    a=filedialog.asksaveasfilename(title="New fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08")),("setting file",("*.setf","*.set"))])
     k=a
     c=open(a,"w")
     text_file=e.get('1.0',END)
@@ -208,6 +210,9 @@ token_type_to_tag = {
     Token.Name.Builtin: "keyword",
     Token.Literal.String.Single: "string_literal",
     Token.Literal.String.Double: "string_literal",
+    Token.Comment:"comment_literal",
+    Token.Literal.Number.Integer:"number_6",
+    Token.Literal.Number.Float:"number_6"
     
    
 }
@@ -259,27 +264,32 @@ def new_temp5():
   j=f"program while\n!File create:{time.asctime()}\ndo i=1,10\nprint*,i\nend do\nend program"
   e.delete('1.0',END)
   e.insert('1.0',j)
+
+
 def f1_file():
  global progress
+ 
  if progress==0:
   m1=messagebox.askokcancel("new_template is responsible for","creating new ones templates")
  if m1:
-  m2=messagebox.askokcancel("There are 7 of them ","in the current version")
+  m2=messagebox.askokcancel("There are 8 of them ","in the current version")
  if m2:
   m3=messagebox.askokcancel("The File tab is responsible for","saving create new or open files")
  if m3:
-  m4=messagebox.askokcancel("The Edit tab is responsible for","saving changed files")
+  m4=messagebox.askokcancel("The Edit tab is responsible for","saving changed files or auto-saving")
  if m4:
-  m5=messagebox.askokcancel("The Compile or run tab is responsible for","Compiling or running or debug files")
+  m5=messagebox.askokcancel("The Build or run tab is responsible for","Building or running or debug files")
  if m5:
-  m5=messagebox.askokcancel("Important to note","Compile needs to select a file")
-  m5=messagebox.askokcancel("And in the Compile this file section","select file no need")
+  m5=messagebox.askokcancel("Important to note","Build needs to select a file")
+  m5=messagebox.askokcancel("And in the Build this file section","select file no need")
  if m5:
-    m6=messagebox.askokcancel("The special opportunities tab is responsible for","Select compilator or full screen or auto-saving")
+    m6=messagebox.askokcancel("The special opportunities tab is responsible for","Select compilator or full screen ")
     m6=messagebox.askokcancel("Important to note","When autosaving you can't run files")
 
  if m6:
     m7=messagebox.askokcancel("Excellent well done","we looked at the main functions of ide")
+
+ 
 
 
 def blue_them():
@@ -311,10 +321,11 @@ m20=Menu()
 m30=Menu()
 m32=Menu()
 m33=Menu()
-def debug_file1():
 
-    os.system(f"gfortran {k} -g")
-    os.system(f"gdb {k}.exe")
+def debug_file1():
+    global value9,value10,value3
+    os.system(f"{value3} {k} {value9}")
+    os.system(f"{value10} {k}.exe")
     
 
 def debug_file():
@@ -369,6 +380,7 @@ def new_temp6():
     e.insert(1.0,e12)
 
 def run_edit():
+  time.sleep(2)
   while(True):
    time.sleep(1)
    global lemt
@@ -381,8 +393,8 @@ def run_edit():
   
 
 def run_edit1():
-  s=messagebox.askokcancel("Warning!When you log in","you cannot run files")
-  s1=messagebox.askokcancel(" And if you want to run ","the file you have to restart ide")
+  s1=messagebox.askokcancel("Warning!autosave does not","work correctly")
+
   if s1:
    threading.Thread(target=run_edit).start()
 def terminal_open1():
@@ -392,7 +404,11 @@ def terminal_open1():
 def terminal_open():
     threading.Thread(target=terminal_open1).start()
 def info2():
- messagebox.showwarning("Version:5.1.2","by Nin12334")
+ messagebox.showwarning("Version:5.1.3_alpha","by Nin12334")
+def new_temp7():
+    e.delete('1.0',END)
+    i=f"program program\n! new file:{time.asctime()}\nimplicit none\n character(len=4) :: first_name\n  first_name = 'John'\n  print *, first_name\nend program"
+    e.insert('1.0',i)
 m30.add_command(label="Dark",command=dark_them)
 m30.add_command(label="Light",command=light_them)
 m30.add_command(label="Blue",command=blue_them)
@@ -409,15 +425,17 @@ m20.add_command(label="new template empty",command=new_temp3)
 m20.add_command(label="new template if",command=new_temp4)
 m20.add_command(label="new template while",command=new_temp5)
 m20.add_command(label="new template type",command=new_temp6)
+m20.add_command(label="new template character var",command=new_temp7)
+
 m2.add_command(label="Run",command=run_file)
-m2.add_command(label="Compile",command=compile_file)
-m2.add_command(label="Compile this file",command=compile_file1)
+m2.add_command(label="Build",command=compile_file)
+m2.add_command(label="Build this file",command=compile_file1)
 m2.add_command(label="Debug",command=debug_file1)
 m2.add_command(label="Compile & Run",command=files_file1)
 m18.add_command(label="auto-saving",command=run_edit1)
 
 m.add_cascade(label="File",menu=m1)
-m.add_cascade(label="Compile or Run",menu=m2)
+m.add_cascade(label="Build or Run",menu=m2)
 m.add_cascade(label="Edit",menu=m18)
 m.add_cascade(label="delete",menu=m19)
 m.add_cascade(label="new template",menu=m20)
@@ -436,15 +454,19 @@ def select_compilator():
     def close_command():
      window.destroy()
     def save_command():
-        global value3,value4
+        global value3,value4,value9,value10
         value1=select_button4.get()
         value2=select_button6.get()
+        value5=select_button_dgb.get()
+        value6=select_button_gg.get()
         value3=value1
         value4=value2
+        value9=value5
+        value10=value6
         print(value3)
-        print(value4)
+        print(value4,value9,value10)
 
-    window.title("Select compilator")
+    window.title("Select compilator& dbg")
     window.geometry("500x500")
     window.resizable(False,False)
     select_button=Label(window,text="!Reminder to take effect please click save",font=(30))
@@ -452,6 +474,11 @@ def select_compilator():
     select_button4=Entry(window,width=70)
     select_button5=Label(window,text="!Explanation In this field you need to enter a command that gives a name\n to your compile file, for example in intel fortran -o",font=(30))
     select_button6=Entry(window,width=70)
+    select_button8=Label(window,text="!This field answers how the file with debug information is compiled,\n for example in gfortran -g",font=(30))
+    select_button_dgb=Entry(window,width=70)
+    select_button9=Label(window,text="!In this field fill in how you launch the debugger from the command line\n, for example, gdb",font=(30))
+    select_button_gg=Entry(window,width=70)
+    select_button7=Entry(window,width=70)
     select_button1=Button(window,text="Save",font=30,command=save_command)
     select_button2=Button(window,text="Close",font=30,command=close_command)
 
@@ -459,18 +486,28 @@ def select_compilator():
     select_button3.place(x=0,y=50)
     select_button4.place(x=0,y=100)
     select_button5.place(x=0,y=150)
-    select_button6.place(x=0,y=200)
+    select_button7.place(x=0,y=200)
+    select_button8.place(x=0,y=250)
+    select_button_dgb.place(x=0,y=300)
+    select_button9.place(x=0,y=350)
+    select_button_gg.place(x=0,y=400)
     select_button1.place(x=450,y=470)
     select_button2.place(x=0,y=470)
+
     window.mainloop()
 def select_theme():
      select_them = colorchooser.askcolor(title ="Choose color") 
      e["bg"]=select_them[1]
      number["bg"]=select_them[1]
+
+
+
+   
 m31.add_command(label="full screen",command=full_screen)
 m31.add_command(label="unfull screen",command=unfull_screen)
 m31.add_command(label="select fortran compilator",command=select_compilator)
 m31.add_command(label="new  theme",command=select_theme)
+
 m.add_cascade(label="special opportunities",menu=m31)
 m31.add_command(label="open  terminal",command=terminal_open)
 m.add_cascade(label="help ",menu=m32)
@@ -490,7 +527,7 @@ def new_file1(event):
   j=f"program hello\n!create:{time.asctime()}\nimplicit none\nwrite(*,*) '{words}'\nend program"
   e.delete("1.0",END)
   e.insert("1.0",j)
-  a=filedialog.asksaveasfilename(title="New fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  a=filedialog.asksaveasfilename(title="New fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08")),("setting file",("*.setf","*.set"))])
   k=a
   c=open(a,"w")
   text_file=e.get('1.0',END)
@@ -500,7 +537,7 @@ def new_file1(event):
 def save_file1(event):
  try:
   global k
-  a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  a=filedialog.asksaveasfilename(title="Save fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08")),("setting file",("*.setf","*.set"))])
   if a!="":
    k=a
    c=open(a,"w")
@@ -511,7 +548,7 @@ def save_file1(event):
 def open_file1(event):
  try:
   global k
-  a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08"))])
+  a=filedialog.askopenfilename(title="Open fortran file",filetypes=[("fortran file",("*.for","*.f","*.f90","*.f95","*.f08")),("setting file",("*.setf","*.set"))])
   k=a
   if a!="":
    c=open(a,"r") 
