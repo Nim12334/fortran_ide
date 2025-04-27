@@ -431,7 +431,7 @@ m2.add_command(label="Run",command=run_file)
 m2.add_command(label="Build",command=compile_file)
 m2.add_command(label="Build this file",command=compile_file1)
 m2.add_command(label="Debug",command=debug_file1)
-m2.add_command(label="Compile & Run",command=files_file1)
+m2.add_command(label="Build & Run",command=files_file1)
 m18.add_command(label="auto-saving",command=run_edit1)
 
 m.add_cascade(label="File",menu=m1)
